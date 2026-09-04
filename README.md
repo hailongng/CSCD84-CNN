@@ -31,12 +31,38 @@ Several of the classes are genuinely ambiguous - greek salad and caprese salad s
 The final network:
 
 ```
-input → [conv 7x7 → BN → ReLU → maxpool]
-      → [conv 5x5 → BN → ReLU → maxpool]
-      → [conv 3x3 → BN → ReLU → maxpool]
-      → [conv 1x1 → BN → ReLU]
-      → dropout
-      → fullyConnected(9) → softmax
+net = dlnetwork;
+tempNet = [
+    imageInputLayer([227 227 3],"Name","imageinput")
+    
+    % Block 1
+    convolution2dLayer([5 5],32,"Name","conv_1","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_1")
+    reluLayer("Name","relu")
+    maxPooling2dLayer([2 2],"Name","maxpool_1","Stride",[2 2])
+    
+    % Block 2
+    convolution2dLayer([5 5],64,"Name","conv_2","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_2")
+    reluLayer("Name","relu_1")
+    maxPooling2dLayer([2 2],"Name","maxpool_2","Stride",[2 2])
+    
+    % Block 3
+    convolution2dLayer([3 3],128,"Name","conv_3","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_3")
+    reluLayer("Name","relu_2")
+    maxPooling2dLayer([2 2],"Name","maxpool_3","Stride",[2 2])
+
+    % Block 4
+    convolution2dLayer([3 3],256,"Name","conv_4","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_4")
+    reluLayer("Name","relu_3")
+   
+    dropoutLayer(0.5,"Name","dropout")
+    fullyConnectedLayer(9,"Name","fc_2")
+    softmaxLayer("Name","softmax")];
+
+net = addLayers(net,tempNet);
 ```
 
 <!-- TODO: correct this to match your final layer list, including channel counts -->
@@ -94,8 +120,8 @@ That pattern points at the data rather than the model. The evidence:
 - **Convergence behaviour:** structurally different models reached the same plateau
 
 <!-- TODO: add the figures -->
-![Confusion matrix](figures/confusion_matrix.png)
-![t-SNE embedding](figures/tsne.png)
+![Confusion matrix](figures/Confusion_Matrix_Final.png)
+![t-SNE embedding](figures/Softmax_Embedding_Final.png)
 
 The practical conclusion is that further architectural work would have had poor returns compared to acquiring more data, or using pretrained weights.
 
