@@ -1,0 +1,86 @@
+```
+net = dlnetwork;
+tempNet = [
+    imageInputLayer([227 227 3],"Name","imageinput")
+    
+    % Block 1
+    convolution2dLayer([5 5],32,"Name","conv_1","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_1")
+    reluLayer("Name","relu")
+    maxPooling2dLayer([2 2],"Name","maxpool_1","Stride",[2 2])
+    
+    % Block 2
+    convolution2dLayer([5 5],64,"Name","conv_2","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_2")
+    reluLayer("Name","relu_1")
+    maxPooling2dLayer([2 2],"Name","maxpool_2","Stride",[2 2])
+    
+    % Block 3
+    convolution2dLayer([3 3],128,"Name","conv_3","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_3")
+    reluLayer("Name","relu_2")
+    maxPooling2dLayer([2 2],"Name","maxpool_3","Stride",[2 2])
+
+    % Block 4
+    convolution2dLayer([3 3],256,"Name","conv_4","Padding","same","WeightL2Factor",0.001)
+    batchNormalizationLayer("Name","bn_4")
+    reluLayer("Name","relu_3")
+   
+    dropoutLayer(0.5,"Name","dropout")
+    fullyConnectedLayer(9,"Name","fc_2")
+    softmaxLayer("Name","softmax")];
+
+net = addLayers(net,tempNet);
+```
+
+
+After testing with the baseline, I realized that 1 convolution layer is too simple (accuracy is around 40% or less), 
+so we need an architecture that is more intricate. I also realized that for classification problems, MaxPooling makes 
+more sense compared to AvgPooling.
+
+So I try 2 convolution layers, and change avgPooling to maxPooling.
+
+After trying 2 layers, I realize that training accuracy is relatively high (80% in some instances), but validation
+accuracy is still roughly 50%, which indicates overfitting behavior. That is when I notice that my architecture 
+have not involved batch normalization.
+
+After including batch normalization, accuracy stays around 50%. The same issue persists, but magnified. Also, the same 
+overfitting behavior still remains. So I turned to DropOut to prevent overfitting.
+The idea is: dropout randomly sets a fraction of neurons to zero (In my architecture, I use 0.5). 
+This prevents the network to rely on a single neuron, and it is forced to rely
+
+After applying dropout, the accuracy is still around 50%. That's when I notice that using 5x5 stride for all convolution 
+layers is still too aggressive. 
+So I tried to reduce [5 5] to [3 3] for all convolution layers, so that it better captures local properties of the images.
+
+Reducing strides does improve the validation accuracy to around 55%. There's no point to reduce strides to [1 1] (since 
+that will just be pure pixelation) So at that point, I consider adding more convolution layers. 
+At this point I also realized that I have been doing Maxpooling only at the end. Nothing prevents me from adding MaxPooling
+in between the process.
+
+So I have a new idea: For each additional convolution layers, add a maxpooling layer. This would allow me to capture the 
+feature right after  each round of convolution without needing to wait till the end.
+I also realized that I haven't incorporated weighted L2 regularization in my architecture.
+So I tried to have a regularization of 1e-4 for each convolution layer to penalize overcomplicated model.
+
+With third layer added and regularization introduced, accuracy reached 57-58%. At that point, I thought, what if we add a 4th layer. 
+Doing that results in validation accuracy being 60%.
+
+At this point, I think that I am about to reach computation limit, so I probably need to turn my attention to other parameters.
+
+So far, all filters are of similar size. When I look back at the lecture notes, I have been thinking about whether each convolution layer 
+can have different size if needed.
+
+- First idea: [5 5], [5 5], [3 3], [3, 3]. Validation accuracy is 63%.
+- Second idea: [5 5], [5 5], [3 3], [1 1]. Validation accuracy is 60%.
+- Third idea: [7 7], [5 5], [3 3], [1 1]. Validation accuracy is 59.5%.
+I have been playing around with other strides layout, but they always fall in the 58-61% range.
+
+# SOME LAST COMMENTS: I have saved my final weights in final_net.mat. To load my weights, you can run these lines in MATLAB shell, one-by-one.
+
+data = load("final_net.mat")
+net = data.net
+scores = minibatchpredict(net, augImdsval)
+YPred = scores2label(scores, classNames)
+accuracy = mean(YPred == valImds.Labels)
+
