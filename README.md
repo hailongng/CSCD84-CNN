@@ -101,20 +101,6 @@ The practical conclusion is that further architectural work would have had poor 
 
 ---
 
-## Repository structure
-
-```
-├── src/
-│   ├── train.m              # training script
-│   ├── buildNetwork.m       # layer definitions
-│   └── evaluate.m           # accuracy, confusion matrix, t-SNE
-├── figures/
-├── experiments/             # per-experiment logs
-└── README.md
-```
-
-<!-- TODO: match this to your actual files -->
-
 ## Running it
 
 ```matlab
