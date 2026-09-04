@@ -17,10 +17,10 @@ The most useful outcome was not the accuracy number. It was identifying that acc
 ## Dataset
 
 <!-- TODO: fill in -->
-- **Source:** [dataset name / link]
-- **Classes (9):** [list them — e.g. burger, greek_salad, caprese_salad, ...]
-- **Split:** [n] training / [n] validation images
-- **Preprocessing:** resized to [WxH], augmented with [random reflection / translation / rotation]
+- **Source:** ExampleFoodImageDataset.zip (available on MATLAB)
+- **Classes (9):** caesar_salad, caprese_salad, french_fries, greek_salad, hamburger, hot_dog, pizza, sashimi, sushi
+- **Split:** 636 training / 342 validation images (training factor of 0.65)
+- **Preprocessing:** augmented with [random reflection / translation / rotation]
 
 Several of the classes are genuinely ambiguous - greek salad and caprese salad share most of their visual features, and the confusion matrix reflects that.
 
