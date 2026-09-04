@@ -120,8 +120,8 @@ That pattern points at the data rather than the model. The evidence:
 - **Convergence behaviour:** structurally different models reached the same plateau
 
 <!-- TODO: add the figures -->
-![Confusion matrix](figures/Confusion_Matrix_Final.png)
-![t-SNE embedding](figures/Softmax_Embedding_Final.png)
+![Confusion matrix](figures/Confusion_Matrix_Final.xcf)
+![t-SNE embedding](figures/Softmax_Embedding_Final.xcf)
 
 The practical conclusion is that further architectural work would have had poor returns compared to acquiring more data, or using pretrained weights.
 
