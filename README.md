@@ -60,14 +60,14 @@ Each change was tested in isolation against the previous best, so the effect of 
 | # | Change | Val. accuracy | Takeaway |
 |---|---|---|---|
 | 0 | Baseline (shallow, no normalisation) | 40% | Underfitting; too little capacity |
-| 1 | Added conv blocks | [ ]% | [ ] |
-| 2 | Batch normalisation | [ ]% | Stabilised training, faster convergence |
-| 3 | Dropout | [ ]% | [ ] |
-| 4 | L2 regularisation | [ ]% | [ ] |
-| 5 | Data augmentation | [ ]% | [ ] |
-| 6 | Decreasing filter sizes 7→5→3→1 | **63%** | Best result |
+| 1 | 2 conv, maxPooling | 50% | High training accuracy, medicore validation accuracy -> overfitting |
+| 2 | Batch normalisation | 50% | Batch Norm alone is insufficient |
+| 3 | Dropout | 50% | Forgot about strides in conv layers |
+| 4 | 3x3 strides | 55% | Smaller strides does help with capturing local distinction |
+| 5 | Add maxPooling between conv layers, add L2 regularization | 57-58% | All of them help |
+| 6 | Add a 4th conv layer | 60% | Nothing surprising, more layers means capturing more abstract patterns |
+| 6 | Modifying filter sizes | **63%** for the best case | Best result |
 | 7 | Global average pooling | 60% | **Hurt.** See below |
-| 8 | Learning rate 1e-4 → 1e-3 | [ ]% | [ ] |
 
 <!-- TODO: fill in the accuracy column from your experiment log -->
 
